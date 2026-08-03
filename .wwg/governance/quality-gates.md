@@ -20,3 +20,4 @@ Before handoff of meaningful work:
 13. Public endpoints must not incorrectly require Bearer in Swagger; admin endpoints document 403
 14. Handoff **lists every `.wwg/**` path written**; if none and code changed accepted behavior → **gate FAIL**
 15. **Anti AI-slop:** pass self-check in `.wwg/wiki/principles/anti-ai-slop.md` (style match, no noise comments, no drive-by refactors, no parallel abstractions, no useless deps). Green tests alone do **not** pass this gate.
+16. **Spring Boot best practices:** pass checklist in `.wwg/wiki/principles/spring-boot-best-practices.md` (DTOs, thin controllers, constructor DI, global errors, profiles, minimal Actuator, starters).
