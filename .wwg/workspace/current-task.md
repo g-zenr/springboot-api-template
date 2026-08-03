@@ -1,20 +1,20 @@
 # Current Task
 
-**Status:** closed — Anti AI-slop principle + Mandatory WWG sync (2026-08-03)
+**Status:** closed — pushed to GitHub (2026-08-03)
 
-## Done
+## Delivery
 
-- List query + include/select/countOnly (code, tests, docs, WWG list-query-contract)
-- Force WWG update every apply (AGENTS + governance)
-- **Anti AI-slop** (`.wwg/wiki/principles/anti-ai-slop.md`) wired into AGENTS, quality-gates, drift-guard, RESOLVER, CONTRIBUTING, DEVELOPER-GUIDE
+- Repo: https://github.com/g-zenr/springboot-api-template
+- Branch: `main`
+- Commit: `69a189c` — Initial commit: Spring Boot API template with list query and governance.
+- Remote: `origin` → `https://github.com/g-zenr/springboot-api-template.git`
 
-## Standing rules for agents
+## README
 
-1. Apply/repair → update matching `.wwg/**` same task  
-2. Code → pass anti-ai-slop self-check (style match, no noise, smallest diff)  
+GitHub-facing README: clone URL, stack, quick start (Win + Unix), list query, docs table, profiles, contributing.
+
+## Standing agent rules
+
+1. Apply/repair → WWG same task  
+2. Anti AI-slop self-check  
 3. Tests + docs + Swagger when contract changes  
-
-## Ready?
-
-- Local / fork / feature build: **YES**
-- Production product: after secrets + domain ownership
