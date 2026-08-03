@@ -26,6 +26,12 @@ springboot-api-template/
 ├── mvnw / mvnw.cmd               # Maven Wrapper (no global Maven needed)
 ├── docker-compose.yml            # Local Postgres
 ├── Dockerfile                    # Multi-stage JAR image
+├── infra/                        # IaC (provider-portable)
+│   ├── SETUP.md / CONTRACT.md    # Easy setup + env contract
+│   ├── scripts/                  # setup-check, scaffold-provider
+│   └── terraform/
+│       ├── aws/                  # Working AWS example
+│       ├── azure/ · gcp/         # Stubs for next project
 ├── .env.example                  # Env var names (never commit real secrets)
 ├── README.md                     # Front door
 ├── AGENTS.md                     # Agent operating contract (+ Meta-Prompt v2)
@@ -47,6 +53,7 @@ springboot-api-template/
 | `pom.xml` | Dependencies, plugins (MapStruct, Spotless, Boot) | Adding libraries |
 | `docker-compose.yml` | Postgres for local/dev | DB without installing Postgres globally |
 | `Dockerfile` | Container image for the API | Deploy packaging |
+| `infra/` | Terraform IaC (AWS example stack) | Cloud deploy / infra changes |
 | `AGENTS.md` | Rules agents must follow (tests, docs, Swagger) | Changing team/agent process |
 | `README.md` | First 60-second orientation | Quick start changes |
 

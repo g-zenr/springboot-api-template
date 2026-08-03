@@ -1,0 +1,9 @@
+﻿project_name = "springboot-api-template"
+environment  = "dev"
+
+# REQUIRED â€” or set TF_VAR_jwt_secret
+jwt_secret = "change-me-template-jwt-secret-key-32b!"
+
+cors_allowed_origins = "https://localhost"
+db_name              = "template"
+db_username          = "template"

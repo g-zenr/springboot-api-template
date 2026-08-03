@@ -4,6 +4,7 @@
 
 ### Added
 
+- **IaC-ready Terraform** under `infra/terraform/aws` (VPC, RDS, ECR, Secrets, ALB, ECS) + **portable contract** (`CONTRACT.md`, `SETUP.md`, azure/gcp stubs, scaffold script)
 - **Items soft-delete** (Flyway V4 `deleted_at`, `@SQLRestriction`, name reuse after delete)
 - **Item read cache** (`spring-boot-starter-cache`, `CacheConfig`, `@Cacheable` / `@CacheEvict` on `ItemService`)
 - **SpotBugs** Maven plugin + CI step (`spotbugs:check`); SonarLint documented as IDE optional

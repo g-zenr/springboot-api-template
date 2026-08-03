@@ -1,0 +1,10 @@
+# Optional remote state (recommended for teams).
+# 1. Create S3 bucket + DynamoDB table for locks in your account
+# 2. Copy this file to backend.hcl (gitignored) and fill values
+# 3. terraform init -backend-config=backend.hcl
+
+bucket         = "YOUR_TF_STATE_BUCKET"
+key            = "springboot-api-template/dev/terraform.tfstate"
+region         = "us-east-1"
+dynamodb_table = "YOUR_TF_LOCK_TABLE"
+encrypt        = true

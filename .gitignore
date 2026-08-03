@@ -5,9 +5,24 @@ target/
 !**/src/test/**/target/
 
 ### Secrets / local env ###
-.env
-.env.local
 .env.*.local
+
+### Terraform ###
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+backend.hcl
+# Keep provider lockfiles in git: infra/terraform/**/.terraform.lock.hcl
 
 ### OS / logs ###
 *.log
@@ -40,4 +55,5 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+config.bat
+node_modules

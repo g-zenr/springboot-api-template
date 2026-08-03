@@ -116,7 +116,9 @@ Full map: [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md)
 | [docs/API-REFERENCE.md](docs/API-REFERENCE.md) | HTTP catalog |
 | [docs/LIST-QUERY.md](docs/LIST-QUERY.md) | List params: page, sort, search, select, **include** |
 | [docs/DEVELOPER-GUIDE.md](docs/DEVELOPER-GUIDE.md) | Add features, tests, list patterns |
-| [docs/OPERATIONS.md](docs/OPERATIONS.md) | Profiles, secrets, Docker, CI |
+| [docs/OPERATIONS.md](docs/OPERATIONS.md) | Profiles, secrets, Docker, CI, Terraform |
+| [infra/SETUP.md](infra/SETUP.md) | Easy local / cloud / switch-provider setup |
+| [infra/CONTRACT.md](infra/CONTRACT.md) | Portable deploy contract (any cloud) |
 | [docs/README.md](docs/README.md) | Full docs index |
 | [AGENTS.md](AGENTS.md) | Agent operating contract (tests, docs, WWG, anti-slop) |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution basics |
@@ -131,7 +133,7 @@ Full map: [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md)
 - **Users:** me, password change, admin list/create
 - **Samples:** Items (shared catalog), Notes (owner-scoped)
 - **List query:** pagination, sort, search, sparse `select`, `include=count` / `countOnly`
-- **Ops:** `local` \| `postgres` \| `prod`, Docker Compose, Dockerfile, Spotless
+- **Ops:** `local` \| `postgres` \| `prod`, Docker Compose, Dockerfile, Terraform (`infra/`), Spotless
 - **Authz:** **RBAC or ABAC** via `AUTHZ_MODE` / `app.security.authorization.mode` (both implemented)
 - **Quality:** test minima (≥10/feature, ≥5/function), docs + Swagger sync, WWG governance
 

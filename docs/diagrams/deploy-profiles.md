@@ -17,21 +17,32 @@ flowchart LR
   end
 
   subgraph production [prod]
-    PG2[(PostgreSQL)]
-    ECS[ECS JSON logs]
+    PG2[(PostgreSQL RDS)]
+    Fargate[ECS Fargate]
+    ALB[ALB]
+    Sec[Secrets Manager]
     NoSwagger[OpenAPI OFF]
     NoSeed[Demo seed OFF]
     Secret[JWT_SECRET required]
   end
 
+  subgraph iac [IaC]
+    TF[Terraform aws stack]
+  end
+
   Dev[Developer] --> local_dev
   Dev --> Compose --> pg
   CI[GitHub Actions] --> Tests[mvn test]
-  Image[Dockerfile JAR] --> production
+  Image[Dockerfile JAR] --> ECR[ECR]
+  ECR --> Fargate
+  TF --> production
+  Image --> production
 ```
 
 ## Artifacts
 
-- `docker-compose.yml` — Postgres 16  
+- `docker-compose.yml` — Postgres 16 (host 5433)  
 - `Dockerfile` — multi-stage Temurin 21  
-- `.github/workflows/ci.yml` — Spotless + tests  
+- `infra/terraform/aws/` — VPC, RDS, ECR, Secrets, ALB, ECS  
+- `.github/workflows/ci.yml` — Spotless + SpotBugs + tests  
+

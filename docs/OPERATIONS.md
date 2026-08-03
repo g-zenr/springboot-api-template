@@ -31,6 +31,30 @@ Compose publishes **5433→5432** so a local Windows Postgres on 5432 does not s
 
 Run app image with `SPRING_PROFILES_ACTIVE=prod` and real `DB_*` + `JWT_SECRET`.
 
+## Infrastructure as Code (Terraform)
+
+The template is **IaC-ready** and **provider-portable**. Local DB stays Compose; cloud uses a sibling Terraform folder per cloud.
+
+| Path | Purpose |
+|------|---------|
+| [`infra/SETUP.md`](../infra/SETUP.md) | Easy paths: local / AWS / new provider |
+| [`infra/CONTRACT.md`](../infra/CONTRACT.md) | Env + outputs every cloud must honor |
+| [`infra/env.contract.env.example`](../infra/env.contract.env.example) | Exact container env names |
+| [`infra/terraform/aws/`](../infra/terraform/aws/) | Working AWS example |
+| [`infra/terraform/azure/`](../infra/terraform/azure/), [`gcp/`](../infra/terraform/gcp/) | Stubs for the next project |
+
+```powershell
+powershell -File ./infra/scripts/setup-check.ps1
+cd infra/terraform/aws
+copy terraform.tfvars.example terraform.tfvars
+terraform init; terraform plan
+# New cloud later:
+powershell -File ./infra/scripts/scaffold-provider.ps1 -Name azure
+```
+
+Portable outputs: `app_base_url`, `container_registry_url`, `db_jdbc_url`, `redeploy_hint`.  
+**Billable** on apply — destroy unused stacks. Harden HTTPS/private networking in product forks.
+
 ## CI
 
 `.github/workflows/ci.yml` (optimized for fewer downloads / faster runs):

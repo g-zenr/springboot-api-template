@@ -12,6 +12,8 @@
 | Mapping | MapStruct |
 | Docs runtime | springdoc OpenAPI |
 | Logs | Text (local); ECS-style JSON (prod) |
+| Containers | Dockerfile (Temurin 21), Compose Postgres |
+| IaC | Terraform under `infra/terraform/aws` (VPC, RDS, ECR, ALB, ECS) |
 
 ## Package layout
 

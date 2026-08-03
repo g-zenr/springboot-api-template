@@ -1,0 +1,12 @@
+﻿# Optional remote state for teams. Fill and:
+#   terraform init -backend-config=backend.hcl
+#
+# Azure example:
+#   resource_group_name  = "..."
+#   storage_account_name = "..."
+#   container_name       = "tfstate"
+#   key                  = "springboot-api-template/dev.tfstate"
+#
+# GCS example:
+#   bucket = "..."
+#   prefix = "springboot-api-template/dev"
