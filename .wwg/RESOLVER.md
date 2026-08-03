@@ -46,11 +46,15 @@ Handoffs and validation evidence as generated.
 
 Use `wiki/12-maintenance/context-maintenance-matrix.md` and close out with a short utilization note when behavior or architecture changes.
 
-## Code quality (anti-slop)
+## Code quality (anti-slop + Boot practices)
 
-Before coding: read `wiki/principles/anti-ai-slop.md`.  
-Match existing `feature.*` / `common.*` style. No drive-by refactors, comment noise, or parallel abstractions.  
-Handoff fails quality gates if slop is present even when tests pass.
+Before coding, read:
+
+1. `wiki/principles/anti-ai-slop.md` — style, no noise, no drive-by refactors  
+2. `wiki/principles/spring-boot-best-practices.md` — DTOs, thin controllers, constructor DI, actuators, profiles, …  
+
+Match existing `feature.*` / `common.*` style.  
+Handoff fails quality gates if slop or best-practice violations are present even when tests pass.
 
 ## Force WWG update (apply / repair)
 

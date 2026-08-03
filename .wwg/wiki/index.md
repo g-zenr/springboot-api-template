@@ -35,5 +35,6 @@
 ## Coding quality
 
 - `principles/anti-ai-slop.md` — keep code consistent, lean, no AI noise (mandatory)
+- `principles/spring-boot-best-practices.md` — speed/stability Boot practices as guardrails (mandatory)
 
 Start at repository root `AGENTS.md`, then this index via `.wwg/RESOLVER.md`.

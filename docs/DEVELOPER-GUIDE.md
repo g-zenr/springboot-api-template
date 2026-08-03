@@ -105,6 +105,13 @@ WWG: `.wwg/wiki/05-architecture/security-model.md`.
 - No noise comments / abstraction theater / junk dependencies  
 - Handoff fails if slop scan fails (even when tests pass)  
 
+## Spring Boot best practices (guardrails)
+
+**WWG:** `.wwg/wiki/principles/spring-boot-best-practices.md`  
+Inspired by common 2025 speed/stability practice lists (e.g. [Plain English / Medium article](https://javascript.plainenglish.io/12-spring-boot-best-practices-you-cant-ignore-in-2025-if-you-care-about-speed-stability-892f383804dd)).
+
+Must follow: DTOs not entities, thin controllers, constructor DI, global exception handler, secure Actuator, profiles, Flyway, starters, test minima.
+
 ## Do not
 
 - Use `ddl-auto=update`

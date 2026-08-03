@@ -25,6 +25,7 @@ Flag drift when:
 - Apply/repair handoff with empty “WWG files changed” while code changed accepted truth
 - **AI slop:** drive-by refactors, parallel abstractions next to existing `common.*`, restating comments, unused “framework” layers, dependency adds without need, style that ignores sibling `feature.*` code
 - Shipping code that passes tests but fails the **anti-ai-slop** self-check (`.wwg/wiki/principles/anti-ai-slop.md`)
+- **Spring Boot practice drift:** entities returned from controllers; business logic in controllers; field injection; try/catch instead of `ApiExceptionHandler`; widening Actuator exposure; DevTools in prod; unbounded list queries; secrets in repo (see `principles/spring-boot-best-practices.md`)
 
 ## Force rule
 

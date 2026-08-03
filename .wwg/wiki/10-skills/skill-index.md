@@ -25,6 +25,7 @@
 | Principle | Path | When |
 |-----------|------|------|
 | Anti AI-slop | `../principles/anti-ai-slop.md` | **Every** code edit — consistency, no noise, no drive-by refactors |
+| Spring Boot best practices | `../principles/spring-boot-best-practices.md` | **Every** code edit — DTOs, layers, DI, security surface, profiles |
 
 ## Maintenance
 

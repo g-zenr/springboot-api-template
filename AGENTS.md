@@ -77,10 +77,11 @@ Publish the filled Task Contract in the working response (or `.wwg/workspace/cur
 7. `.wwg/wiki/05-architecture/system-overview.md` (architecture tasks)
 8. `.wwg/wiki/05-architecture/list-query-contract.md` (list GET / `page` / `include` / `select` / paging)
 9. `.wwg/wiki/principles/anti-ai-slop.md` (before non-trivial coding — clean, consistent diffs)
-10. `.wwg/workspace/current-task.md`
-11. `.wwg/governance/drift-guard.md`
-12. `README.md`
-13. Relevant source files
+10. `.wwg/wiki/principles/spring-boot-best-practices.md` (speed/stability guardrails)
+11. `.wwg/workspace/current-task.md`
+12. `.wwg/governance/drift-guard.md`
+13. `README.md`
+14. Relevant source files
 
 ## Architecture Conventions
 
@@ -207,6 +208,30 @@ Agents **must**:
 7. **Meaningful tests only** — meet 10/5 minima without padding empty tests.
 8. **Self-check** — run the slop scan in `anti-ai-slop.md` before handoff; **fail handoff** if the scan fails.
 
+## Spring Boot Best Practices Guardrails (mandatory)
+
+**Canonical detail:** `.wwg/wiki/principles/spring-boot-best-practices.md`  
+**Source inspiration:** [12 Spring Boot best practices (2025, speed & stability)](https://javascript.plainenglish.io/12-spring-boot-best-practices-you-cant-ignore-in-2025-if-you-care-about-speed-stability-892f383804dd)
+
+Agents **must** obey (summary):
+
+| # | Rule |
+|---|------|
+| 1 | DTOs at API edge — never return JPA entities from controllers |
+| 2 | Flyway + no open-in-view abuse; paginate public lists |
+| 3 | Keep Actuator exposure minimal (`health`/`info`); never open sensitive endpoints publicly |
+| 4 | No DevTools in production packaging |
+| 5 | Global `ApiExceptionHandler` only — no controller try/catch for expected errors |
+| 6 | Prefer measure (actuator, correlation, logs) over blind optimization |
+| 7 | Use profiles (`local` / `postgres` / `prod`) + env secrets |
+| 8 | Controller → Service → Repository; controllers stay thin |
+| 9 | Meet test minima; use slice tests when they fit; keep contract/MockMvc tests for HTTP |
+| 10 | Constructor injection only (no field `@Autowired`) |
+| 11 | `@Async` only for justified non-request-critical work |
+| 12 | Prefer Spring Boot starters over reinventing stacks |
+
+**Fail handoff** if new code violates these without an ADR.
+
 ## Project Safety Gates
 
 - Pause before production deploy, destructive data ops, or irreversible migrations
@@ -217,6 +242,7 @@ Agents **must**:
 - Never complete an API change without Swagger/OpenAPI annotation + contract-test updates
 - **Never complete apply/repair work without updating the matching `.wwg/wiki/**` (and `workspace/current-task.md`)**
 - **Never hand off AI-slop code** (inconsistent style, noise comments, parallel abstractions, drive-by refactors)
+- **Never skip Spring Boot best-practice guardrails** (DTOs, thin controllers, constructor DI, secured actuators, profiles, …)
 - Default delivery: **no commit/push/PR/release** unless the Task Contract authorizes it
 
 ## Wiki-First vs Code-First
