@@ -3,7 +3,6 @@ package com.template.api.common.paging;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
