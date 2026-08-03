@@ -9,14 +9,22 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.SQLRestriction;
+
+/**
+ * Sample catalog row. Soft-deleted when {@code deleted_at} is set; Hibernate filter
+ * hides those rows from normal repository queries ({@link SQLRestriction}).
+ */
 @Entity
 @Table(name = "items")
+@SQLRestriction("deleted_at IS NULL")
 public class Item {
 
 	@Id
 	private UUID id;
 
-	@Column(nullable = false, length = 120, unique = true)
+	/** Uniqueness among active rows is enforced by Flyway partial index (not JPA unique). */
+	@Column(nullable = false, length = 120)
 	private String name;
 
 	@Column(length = 500)
@@ -27,6 +35,9 @@ public class Item {
 
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
+
+	@Column(name = "deleted_at")
+	private Instant deletedAt;
 
 	protected Item() {
 	}
@@ -56,6 +67,15 @@ public class Item {
 		this.updatedAt = Instant.now();
 	}
 
+	/** Soft-delete: row stays for audit; filtered out of normal queries. */
+	void softDelete() {
+		this.deletedAt = Instant.now();
+	}
+
+	public boolean isDeleted() {
+		return deletedAt != null;
+	}
+
 	public UUID getId() {
 		return id;
 	}
@@ -82,5 +102,9 @@ public class Item {
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public Instant getDeletedAt() {
+		return deletedAt;
 	}
 }

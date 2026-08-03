@@ -37,14 +37,19 @@ Run app image with `SPRING_PROFILES_ACTIVE=prod` and real `DB_*` + `JWT_SECRET`.
 
 1. JDK 21 + **Maven dependency cache** (`~/.m2/repository` via `setup-java`)
 2. **Maven wrapper cache** (`~/.m2/wrapper` — avoids re-downloading the Maven distro)
-3. **Single** `./mvnw -B -ntp spotless:check test` (one process, not two)
+3. **Single** `./mvnw -B -ntp spotless:check compile spotbugs:check test` (format + static analysis + tests)
 4. **Excludes `*IT`** (e.g. Testcontainers Postgres) so CI does not pull Docker images every time
 
 Local full suite (includes Postgres IT when Docker is available):
 
 ```powershell
+.\mvnw.cmd spotless:check
+.\mvnw.cmd spotbugs:check
 .\mvnw.cmd test
 ```
+
+**SpotBugs** fails the build on High-threshold issues (`spotbugs-exclude.xml` for MapStruct).  
+**SonarLint** is recommended as an IDE plugin (not required for CI).
 
 First CI run after `pom.xml` changes still downloads dependencies; later runs should mostly hit cache.
 
@@ -55,6 +60,7 @@ First CI run after `pom.xml` changes still downloads dependencies; later runs sh
 - Actuator **authenticated (Bearer):** `/actuator/metrics`, `/actuator/prometheus` (Prometheus scrape)
 - Rate limit: 429 on abuse
 - Optional async executor: `app.async.enabled=true` (off by default)
+- Item read cache: `app.cache.enabled=true` (default); ConcurrentMap; set `false` to disable
 
 Prometheus scrape example (local):
 

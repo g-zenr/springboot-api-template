@@ -123,6 +123,8 @@ Authorization: Bearer <token>
 { "name": "Widget", "description": "Demo" }
 ```
 
+DELETE soft-deletes the item (it disappears from lists; the same name can be reused).
+
 ### Notes (your notes only)
 
 ```http

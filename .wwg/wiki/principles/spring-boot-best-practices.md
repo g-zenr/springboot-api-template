@@ -23,7 +23,16 @@ These rules keep the template **fast, stable, and consistent**. Handoff fails if
 | 9 | **Fast tests when possible** | Slice samples: `ItemControllerWebMvcTest`, `ItemRepositoryDataJpaTest` + full `@SpringBootTest` contracts | Prefer slices for pure web/JPA units; keep full stack for security/auth contracts; never drop coverage minima |
 | 10 | **Constructor injection** | Final fields + constructors everywhere | No `@Autowired` on fields; no field injection |
 | 11 | **Async only when needed** | `AsyncConfig` optional via `app.async.enabled=false` (default) | Enable only for non-request-critical jobs; keep API path synchronous |
-| 12 | **Use Boot starters** | security, validation, data-jpa, flyway, actuator, webmvc | Prefer official starters over hand-rolled stacks / random libs |
+| 12 | **Use Boot starters** | security, validation, data-jpa, flyway, actuator, webmvc, **cache** | Prefer official starters over hand-rolled stacks / random libs |
+
+### Sample patterns (beyond the 12)
+
+| Pattern | This template |
+|---------|---------------|
+| Soft delete | Items: `deleted_at` + Hibernate `@SQLRestriction`; DELETE soft-deletes (Flyway V4) |
+| Caching | `spring-boot-starter-cache` + `CacheConfig`; `@Cacheable` / `@CacheEvict` on `ItemService` |
+| Static analysis | SpotBugs in CI (`spotbugs:check`); SonarLint recommended in IDE |
+| Formatting | Spotless (CI + local) |
 
 ---
 
@@ -94,6 +103,27 @@ Default path stays synchronous. Optional pool: `app.async.enabled=true` + `Async
 
 Add libraries only when a starter/capability is insufficient (anti-ai-slop + this rule).
 
+### Soft delete (items sample)
+
+- Column `deleted_at`; active name uniqueness via service + `@SQLRestriction` (H2-portable; optional Postgres partial unique index in product forks).
+- Entity: `@SQLRestriction("deleted_at IS NULL")` + `softDelete()`.
+- Service DELETE sets `deleted_at`, flushes, detaches (avoid L1 returning deleted rows).
+- Do **not** hard-delete from public APIs unless a product ADR says so.
+- Copy this pattern for new features that need soft delete (notes/users are hard-delete unless extended).
+
+### Caching (items sample)
+
+- `app.cache.enabled` (default `true`) → `CacheConfig` + ConcurrentMap.
+- `@Cacheable("items")` on `ItemService.findById`; evict on create/update/delete.
+- Use the Spring proxy for self-invocation when select reuses full find (`ObjectProvider`).
+- Disable with `app.cache.enabled=false`. Swap to Redis later via Boot cache type — keep annotations.
+
+### Static analysis
+
+- CI: `spotless:check` + `spotbugs:check` (High threshold) + tests.
+- IDE: [SonarLint](https://www.sonarsource.com/products/sonarlint/) optional; not a required server.
+- Exclusions: `spotbugs-exclude.xml` (MapStruct impls only).
+
 ---
 
 ## Self-check (before handoff)
@@ -105,8 +135,48 @@ Add libraries only when a starter/capability is insufficient (anti-ai-slop + thi
 - [ ] Actuator exposure not widened casually  
 - [ ] Profile/secret hygiene  
 - [ ] Lists paginated where public  
-- [ ] Tests meet minima; Spotless clean  
+- [ ] Soft-delete / cache: follow item sample if adding similar behavior  
+- [ ] Tests meet minima; Spotless + SpotBugs clean  
 - [ ] WWG/docs updated if contract/ops changed  
+
+---
+
+## Mapping: arsy786/springboot-best-practices checklist
+
+Source: [arsy786/springboot-best-practices](https://github.com/arsy786/springboot-best-practices) (developer hygiene guide).  
+This template **implements or intentionally diverges** as follows — do not re-import conflicting patterns.
+
+| arsy # | Practice | Template status | Notes |
+|--------|----------|-----------------|-------|
+| 1 | Packaging | **Done** | Feature-first (`feature.*`, ADR 0002), not type-based only |
+| 2 | Boot starters | **Done** | Including cache, actuator, security, flyway |
+| 3 | Dependency versions | **Done** | Boot parent BOM |
+| 4 | Lombok | **Skip** | Records + explicit constructors; Lombok optional later |
+| 5–6 | Thin controller / service logic | **Done** | Layering rule above |
+| 7 | Constructor injection | **Done** | No field `@Autowired` |
+| 8 | SLF4J | **Done** | Logback; ECS JSON in prod |
+| 9 | Meaningful names | **Done** | + anti-ai-slop |
+| 10 | Bean Validation | **Done** | DTOs + `@Valid` |
+| 11 | Custom exceptions | **Done** | `ApiExceptionHandler` → ProblemDetail |
+| 12 | Custom response object | **Done differently** | Typed DTOs + ProblemDetail — **no** generic `APIResponse` wrapper |
+| 13 | Design patterns | **Done** | Use when needed; MapStruct for DTO mapping |
+| 14 | YAML config | **Done** | `application.yml` multi-doc profiles |
+| 15 | Externalize secrets | **Done** | Env vars, BCrypt, JWT secret rules |
+| 16 | Tests | **Done** | ≥10/feature, ≥5/function; slices + full stack |
+| 17 | Optional / avoid NPE | **Done** | `orElseThrow` → domain exceptions |
+| 18 | Collections | **Done** | Style / streams where natural |
+| 19 | Caching | **Done** | Item `findById` sample; not every feature |
+| 20 | Pagination | **Done** | `PageQuery` / select / include (richer than basic page) |
+| 21 | Remove dead code | **Done** | Spotless + anti-ai-slop |
+| 22 | Comments sparingly | **Done** | anti-ai-slop |
+| 23 | Formatting | **Done** | Spotless |
+| 24 | SonarLint | **IDE optional** | SpotBugs in CI instead of mandatory Sonar server |
+| 25 | Be simple | **Done** | anti-ai-slop |
+| — | Soft delete (notable) | **Done** | Items sample (V4) |
+| — | MapStruct (notable) | **Done** | Item mapper pattern |
+| — | Per-env config (notable) | **Done** | local / postgres / prod |
+
+**Do not copy from that tutorial into this template:** generic `APIResponse` envelopes, forced Lombok, type-only packages, or caching/soft-delete without a real need on every entity.
 
 ---
 

@@ -26,26 +26,33 @@
 - Login: `POST /api/v1/auth/login` with `admin/admin123` or `user/user123`
 - Protected APIs need `Authorization: Bearer <token>`
 
-## Formatting
+## Formatting & static analysis
 
 ```powershell
 .\mvnw.cmd spotless:apply
 .\mvnw.cmd spotless:check
+.\mvnw.cmd compile spotbugs:check
 ```
+
+- **Spotless** — format / unused imports (CI)  
+- **SpotBugs** — High-threshold static analysis (CI); exclusions in `spotbugs-exclude.xml`  
+- **SonarLint** — optional IDE plugin (not a required SonarQube server)
 
 ## Code quality (anti AI-slop + Boot practices)
 
 Keep changes small and consistent with existing `feature.*` / `common.*` code.
 
 - Anti-slop: `.wwg/wiki/principles/anti-ai-slop.md`  
-- Boot speed/stability guardrails: `.wwg/wiki/principles/spring-boot-best-practices.md`  
+- Boot speed/stability + arsy786 checklist map: `.wwg/wiki/principles/spring-boot-best-practices.md`  
 - Also: `AGENTS.md` sections of the same names  
 
 - No drive-by refactors or unused abstractions  
 - No comments that restate the code / AI banners  
 - Prefer extending existing helpers over new parallel patterns  
 - DTOs at the API edge; thin controllers; constructor injection  
-- Meaningful tests only; Spotless for format  
+- Meaningful tests only; Spotless + SpotBugs for CI quality  
+- Soft-delete / cache: follow `feature.item` samples when needed  
+
 
 ## Do not
 

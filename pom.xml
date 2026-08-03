@@ -22,9 +22,15 @@
 		<logstash-logback.version>8.0</logstash-logback.version>
 		<testcontainers.version>1.20.4</testcontainers.version>
 		<spotless.version>2.44.2</spotless.version>
+		<spotbugs.version>4.9.3</spotbugs.version>
+		<spotbugs-maven-plugin.version>4.9.3.0</spotbugs-maven-plugin.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -189,6 +195,26 @@
 							<order>java|javax|jakarta,org,com,</order>
 						</importOrder>
 					</java>
+				</configuration>
+			</plugin>
+			<!-- Static analysis (CI). IDE: install SonarLint for live feedback. -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-maven-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>${spotbugs.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<effort>Default</effort>
+					<threshold>High</threshold>
+					<failOnError>true</failOnError>
+					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 		</plugins>

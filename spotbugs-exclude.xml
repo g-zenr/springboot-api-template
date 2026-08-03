@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs exclusions for the Spring Boot API template.
+  Prefer fixing real bugs; only exclude known framework false positives.
+-->
+<FindBugsFilter>
+	<!-- MapStruct-generated mappers live under target/generated-sources -->
+	<Match>
+		<Package name="~.*\.mapper\..*"/>
+	</Match>
+	<Match>
+		<Class name="~.*MapperImpl"/>
+	</Match>
+</FindBugsFilter>

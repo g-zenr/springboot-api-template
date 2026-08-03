@@ -96,11 +96,13 @@ public class ItemController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "Delete item")
+	@Operation(
+			summary = "Soft-delete item",
+			description = "Sets deleted_at; item disappears from list/get. Name may be reused afterward.")
 	@ApiResponses({
-			@ApiResponse(responseCode = "204", description = "Item deleted"),
+			@ApiResponse(responseCode = "204", description = "Item soft-deleted"),
 			@ApiResponse(responseCode = "401", description = "Unauthenticated"),
-			@ApiResponse(responseCode = "404", description = "Item not found")
+			@ApiResponse(responseCode = "404", description = "Item not found (or already deleted)")
 	})
 	public ResponseEntity<Void> delete(@PathVariable UUID id) {
 		itemService.delete(id);

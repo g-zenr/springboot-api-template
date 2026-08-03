@@ -172,6 +172,7 @@ Both evaluators ship; switch is configuration only. Details: [docs/OPERATIONS.md
 
 ```powershell
 .\mvnw.cmd spotless:apply
+.\mvnw.cmd compile spotbugs:check
 .\mvnw.cmd test
 ```
 

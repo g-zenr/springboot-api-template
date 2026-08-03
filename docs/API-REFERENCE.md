@@ -208,18 +208,21 @@ Apply the same pattern to new features: `PageQuery` + `Pageables` + `FieldSelect
 
 | Method | Path | Auth | Success |
 |--------|------|------|---------|
-| GET | `/api/v1/items` | Bearer | 200 paged list |
+| GET | `/api/v1/items` | Bearer | 200 paged list (active only) |
 | GET | `/api/v1/items/{id}` | Bearer | 200 / 404 |
 | POST | `/api/v1/items` | Bearer | 201 |
 | PUT | `/api/v1/items/{id}` | Bearer | 200 / 404 / 409 |
-| DELETE | `/api/v1/items/{id}` | Bearer | 204 / 404 |
+| DELETE | `/api/v1/items/{id}` | Bearer | 204 soft-delete / 404 |
+
+**Soft delete:** DELETE sets `deleted_at`. Soft-deleted items are hidden from list/get (404). The same `name` may be reused after soft-delete.  
+**Cache:** single-item GET is cached in-process (`items` cache); updates/deletes evict. Disable with `app.cache.enabled=false`.
 
 **List query:** search on `name`, `description`. Sort: `name`, `description`, `createdAt`, `updatedAt` (default `name,asc`).  
 **Select roots:** `id`, `name`, `description`, `createdAt`, `updatedAt`.  
 **Include:** `count`, `countOnly` (see [LIST-QUERY.md](LIST-QUERY.md)).
 
 **Body (create/update):** `{ "name": "string", "description": "optional" }`  
-Name unique (case-insensitive conflict → 409), max 120; description max 500.
+Name unique among active rows (case-insensitive conflict → 409), max 120; description max 500.
 
 Examples:
 

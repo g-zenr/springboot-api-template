@@ -31,9 +31,12 @@
 
 ```powershell
 .\mvnw.cmd spotless:apply
-.\mvnw.cmd test
 .\mvnw.cmd spotless:check
+.\mvnw.cmd compile spotbugs:check
+.\mvnw.cmd test
 ```
+
+Optional IDE: install **SonarLint** for live findings (CI uses SpotBugs, not a SonarQube server).
 
 ## Agent entry
 
@@ -43,7 +46,7 @@ Read `AGENTS.md` first (Meta-Prompt v2 + testing + **documentation sync**).
 
 | Package | Pattern |
 |---------|---------|
-| `feature.item` | Shared resource CRUD + MapStruct + paged list |
+| `feature.item` | Shared resource CRUD + MapStruct + paged list + **soft-delete** + **@Cacheable** sample |
 | `feature.note` | **Owner-scoped** CRUD + paged list |
 | `feature.user` | Identity APIs + admin paged list |
 | `feature.auth` | Login / refresh / logout / register |
@@ -52,7 +55,21 @@ Read `AGENTS.md` first (Meta-Prompt v2 + testing + **documentation sync**).
 | `common.include` | Optional extras (`IncludeOptions`, `IncludeKey`) — `count`, `countOnly`, … |
 
 **List query deep-dive:** [LIST-QUERY.md](LIST-QUERY.md)  
-**Agent truth (WWG):** `.wwg/wiki/05-architecture/list-query-contract.md`
+**Agent truth (WWG):** `.wwg/wiki/05-architecture/list-query-contract.md`  
+**Best practices map (12 + arsy786 checklist):** `.wwg/wiki/principles/spring-boot-best-practices.md`
+
+### Soft delete (copy from items)
+
+1. Flyway: `deleted_at` + partial unique index for active natural keys.
+2. Entity: `@SQLRestriction("deleted_at IS NULL")` + `softDelete()`.
+3. Service DELETE: set timestamp, `saveAndFlush`, `entityManager.detach` (L1 safety).
+4. Do not expose `deleted_at` on public DTOs unless product needs it.
+
+### Caching (copy from items)
+
+1. `spring-boot-starter-cache` + `CacheConfig` (`app.cache.enabled`).
+2. `@Cacheable` on hot single-id reads; `@CacheEvict` on writes.
+3. Use Spring proxy / `ObjectProvider` for self-invocation if one method calls another.
 
 ## Add a paged list to a new feature
 

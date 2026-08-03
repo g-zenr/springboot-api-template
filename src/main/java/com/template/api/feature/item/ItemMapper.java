@@ -12,6 +12,7 @@ public interface ItemMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
+	@Mapping(target = "deletedAt", ignore = true)
 	@Mapping(target = "name", source = "name", qualifiedByName = "trim")
 	@Mapping(target = "description", source = "description", qualifiedByName = "trimToNull")
 	Item toNewEntity(ItemRequest request);

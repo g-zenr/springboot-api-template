@@ -48,5 +48,6 @@ jobs:
 
       # One Maven process: reuses reactor + local repo; -ntp hides transfer spam
       # Excludes *IT (Testcontainers) for speed; H2 tests still run fully
-      - name: Spotless check and tests
-        run: ./mvnw -B -ntp spotless:check test -Dsurefire.excludes=**/*IT.java
+      # SpotBugs: High threshold static analysis (SonarLint remains IDE-side)
+      - name: Spotless, SpotBugs, and tests
+        run: ./mvnw -B -ntp spotless:check compile spotbugs:check test -Dsurefire.excludes=**/*IT.java

@@ -36,6 +36,16 @@ class ItemMapperTest {
 		Item entity = mapper.toNewEntity(new ItemRequest("  Hello  ", "  world  "));
 		assertEquals("Hello", entity.getName());
 		assertEquals("world", entity.getDescription());
+		assertNull(entity.getDeletedAt());
+	}
+
+	@Test
+	void softDelete_setsDeletedAt() {
+		Item item = new Item("Soft", "x");
+		assertNull(item.getDeletedAt());
+		item.softDelete();
+		assertNotNull(item.getDeletedAt());
+		org.junit.jupiter.api.Assertions.assertTrue(item.isDeleted());
 	}
 
 	@Test

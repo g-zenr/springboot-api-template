@@ -10,7 +10,7 @@
 | PUT | `/api/v1/users/me/password` | Bearer | Change password |
 | GET | `/api/v1/users` | ADMIN | List users (paged + list query) |
 | POST | `/api/v1/users` | ADMIN | Create user |
-| GET/POST/PUT/DELETE | `/api/v1/items` | Bearer | Sample catalog CRUD (list uses list query) |
+| GET/POST/PUT/DELETE | `/api/v1/items` | Bearer | Sample catalog CRUD (list uses list query); DELETE is **soft-delete** (`deleted_at`) |
 | GET/POST/PUT/DELETE | `/api/v1/notes` | Bearer | Owner-scoped notes (list uses list query) |
 | GET | `/actuator/health` | Public | Health |
 

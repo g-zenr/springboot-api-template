@@ -28,10 +28,11 @@ erDiagram
 
   ITEMS {
     uuid id PK
-    string name UK
+    string name
     string description
     timestamptz created_at
     timestamptz updated_at
+    timestamptz deleted_at
   }
 
   NOTES {

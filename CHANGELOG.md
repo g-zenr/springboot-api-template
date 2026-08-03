@@ -4,6 +4,10 @@
 
 ### Added
 
+- **Items soft-delete** (Flyway V4 `deleted_at`, `@SQLRestriction`, name reuse after delete)
+- **Item read cache** (`spring-boot-starter-cache`, `CacheConfig`, `@Cacheable` / `@CacheEvict` on `ItemService`)
+- **SpotBugs** Maven plugin + CI step (`spotbugs:check`); SonarLint documented as IDE optional
+- arsy786 best-practices checklist mapped in `.wwg/wiki/principles/spring-boot-best-practices.md`
 - Reusable list/pagination package `common.paging` (`PageQuery`, `PageResponse`, `Pageables`, `Specs`)
 - List GET for **items**, **notes**, and **users** supports `page`, `limit`, `sort`, `search` and returns a paged envelope
 - Reusable sparse/deep field selection `common.select` (`select` query param, dot paths, allow-lists)

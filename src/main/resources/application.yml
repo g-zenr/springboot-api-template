@@ -82,6 +82,9 @@ app:
   # Async executor off by default — set true only for fire-and-forget jobs (email, webhooks)
   async:
     enabled: false
+  # In-process item cache (ConcurrentMap). Set false to disable; swap to Redis via cache type later.
+  cache:
+    enabled: true
 
 logging:
   level:

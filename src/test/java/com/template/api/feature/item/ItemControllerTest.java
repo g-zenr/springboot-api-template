@@ -478,6 +478,79 @@ class ItemControllerTest {
 				.andExpect(jsonPath("$.title").value("Resource Not Found"));
 	}
 
+	@Test
+	void softDelete_allowsReusingSameName() throws Exception {
+		String id = createItem("Reusable Soft Name", "first");
+
+		mockMvc.perform(delete("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(post("/api/v1/items")
+						.header(HttpHeaders.AUTHORIZATION, auth)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(itemJson("Reusable Soft Name", "second")))
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.name").value("Reusable Soft Name"));
+	}
+
+	@Test
+	void softDelete_excludesItemFromList() throws Exception {
+		String name = "List Soft Gone " + UUID.randomUUID();
+		String id = createItem(name, "x");
+
+		mockMvc.perform(delete("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/v1/items")
+						.param("search", name)
+						.header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content", hasSize(0)));
+	}
+
+	@Test
+	void softDelete_secondDelete_returns404() throws Exception {
+		String id = createItem("Double Soft Delete", "x");
+
+		mockMvc.perform(delete("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isNoContent());
+		mockMvc.perform(delete("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getItem_afterUpdate_returnsFreshDescription_notStaleCache() throws Exception {
+		String id = createItem("Cache Evict Item", "before");
+
+		mockMvc.perform(get("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.description").value("before"));
+
+		mockMvc.perform(put("/api/v1/items/" + id)
+						.header(HttpHeaders.AUTHORIZATION, auth)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(itemJson("Cache Evict Item", "after")))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.description").value("after"));
+
+		mockMvc.perform(get("/api/v1/items/" + id).header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.description").value("after"));
+	}
+
+	@Test
+	void getItem_withSelect_stillWorksWithCache() throws Exception {
+		String id = createItem("Select Cache Item", "full");
+
+		mockMvc.perform(get("/api/v1/items/" + id)
+						.param("select", "id,name")
+						.header(HttpHeaders.AUTHORIZATION, auth))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(id))
+				.andExpect(jsonPath("$.name").value("Select Cache Item"))
+				.andExpect(jsonPath("$.description").doesNotExist());
+	}
+
 	private String createItem(String name, String description) throws Exception {
 		MvcResult result = mockMvc.perform(post("/api/v1/items")
 						.header(HttpHeaders.AUTHORIZATION, auth)
