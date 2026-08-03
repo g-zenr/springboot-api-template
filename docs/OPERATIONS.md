@@ -33,10 +33,20 @@ Run app image with `SPRING_PROFILES_ACTIVE=prod` and real `DB_*` + `JWT_SECRET`.
 
 ## CI
 
-`.github/workflows/ci.yml`:
+`.github/workflows/ci.yml` (optimized for fewer downloads / faster runs):
 
-1. `spotless:check`
-2. `./mvnw test`
+1. JDK 21 + **Maven dependency cache** (`~/.m2/repository` via `setup-java`)
+2. **Maven wrapper cache** (`~/.m2/wrapper` — avoids re-downloading the Maven distro)
+3. **Single** `./mvnw -B -ntp spotless:check test` (one process, not two)
+4. **Excludes `*IT`** (e.g. Testcontainers Postgres) so CI does not pull Docker images every time
+
+Local full suite (includes Postgres IT when Docker is available):
+
+```powershell
+.\mvnw.cmd test
+```
+
+First CI run after `pom.xml` changes still downloads dependencies; later runs should mostly hit cache.
 
 ## Observability
 

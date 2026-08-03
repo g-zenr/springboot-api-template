@@ -6,6 +6,17 @@ on:
   pull_request:
     branches: [main, master]
 
+# Cancel superseded runs on the same branch (saves queue + downloads)
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Faster short-lived CI JVMs; quieter Maven logs
+  MAVEN_OPTS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+  # Skip Testcontainers Postgres IT in default CI (avoids pulling docker images every run)
+  # Run locally with Docker: ./mvnw test  (includes ItemPostgresIT when Docker is available)
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,13 +30,23 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+          cache-dependency-path: |
+            pom.xml
+            .mvn/wrapper/maven-wrapper.properties
 
-      # Ensure wrapper is executable (Windows checkouts may lose +x without git filemode)
+      # Wrapper dists live under ~/.m2/wrapper (only-script wrapper downloads Maven once, then cache hits)
+      - name: Cache Maven wrapper distributions
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/wrapper
+          key: ${{ runner.os }}-mvnw-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-mvnw-
+
       - name: Ensure mvnw is executable
         run: chmod +x mvnw
 
-      - name: Spotless check
-        run: ./mvnw -B spotless:check
-
-      - name: Run tests
-        run: ./mvnw -B test
+      # One Maven process: reuses reactor + local repo; -ntp hides transfer spam
+      # Excludes *IT (Testcontainers) for speed; H2 tests still run fully
+      - name: Spotless check and tests
+        run: ./mvnw -B -ntp spotless:check test -Dsurefire.excludes=**/*IT.java
