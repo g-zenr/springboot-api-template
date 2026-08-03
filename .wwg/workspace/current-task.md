@@ -1,20 +1,16 @@
 # Current Task
 
-**Status:** closed — pushed to GitHub (2026-08-03)
+**Status:** closed — RBAC/ABAC config switch (2026-08-03)
 
-## Delivery
+## Authz
 
-- Repo: https://github.com/g-zenr/springboot-api-template
-- Branch: `main`
-- Commit: `69a189c` — Initial commit: Spring Boot API template with list query and governance.
-- Remote: `origin` → `https://github.com/g-zenr/springboot-api-template.git`
-
-## README
-
-GitHub-facing README: clone URL, stack, quick start (Win + Unix), list query, docs table, profiles, contributing.
+- `app.security.authorization.mode` / `AUTHZ_MODE` = `rbac` (default) | `abac`
+- Package: `config.security.authz`
+- WWG: `05-architecture/security-model.md`
+- GitHub: https://github.com/g-zenr/springboot-api-template
 
 ## Standing agent rules
 
-1. Apply/repair → WWG same task  
+1. Apply/repair → update matching `.wwg/**` same task  
 2. Anti AI-slop self-check  
 3. Tests + docs + Swagger when contract changes  

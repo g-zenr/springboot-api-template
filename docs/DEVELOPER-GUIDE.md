@@ -78,6 +78,24 @@ return FieldSelection.apply(page, query, Set.of("id", "name", "createdAt"));
 6. In the controller: `list(@ParameterObject PageQuery query)` → `PageResponse<?>`.
 7. Document sort/search/**select**/**include** on `@Operation` and in `docs/API-REFERENCE.md`.
 
+## Authorization (RBAC / ABAC switch)
+
+```yaml
+app.security.authorization.mode: rbac   # or abac
+# env: AUTHZ_MODE=rbac|abac
+```
+
+Use the shared facade (do not hardcode only `hasRole` for new admin checks):
+
+```java
+@PreAuthorize("@authz.allow(authentication, 'user:list')")
+// service:
+authorizationService.require(auth, AuthzActions.NOTE_READ, note);
+```
+
+Add actions in `AuthzActions`; extend `RbacEvaluator` and/or `AbacEvaluator` together.  
+WWG: `.wwg/wiki/05-architecture/security-model.md`.
+
 ## Anti AI-slop (keep code clean)
 
 **WWG:** `.wwg/wiki/principles/anti-ai-slop.md` · **AGENTS.md** section of the same name.

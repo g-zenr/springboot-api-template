@@ -10,6 +10,8 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import com.template.api.common.paging.PagedReads;
 import com.template.api.common.select.FieldProjector;
 import com.template.api.common.select.FieldSelection;
 import com.template.api.common.select.SelectPaths;
+import com.template.api.config.security.authz.AuthorizationService;
+import com.template.api.config.security.authz.AuthzActions;
 import com.template.api.feature.user.AppUserRepository;
 import com.template.api.feature.user.UserResponse;
 
@@ -38,16 +42,19 @@ public class NoteService {
 	private final NoteMapper noteMapper;
 	private final AppUserRepository appUserRepository;
 	private final PagedReads pagedReads;
+	private final AuthorizationService authorizationService;
 
 	public NoteService(
 			NoteRepository noteRepository,
 			NoteMapper noteMapper,
 			AppUserRepository appUserRepository,
-			PagedReads pagedReads) {
+			PagedReads pagedReads,
+			AuthorizationService authorizationService) {
 		this.noteRepository = noteRepository;
 		this.noteMapper = noteMapper;
 		this.appUserRepository = appUserRepository;
 		this.pagedReads = pagedReads;
+		this.authorizationService = authorizationService;
 	}
 
 	@Transactional(readOnly = true)
@@ -79,7 +86,7 @@ public class NoteService {
 
 	@Transactional(readOnly = true)
 	public Object getMine(UUID id, String username, String select) {
-		NoteResponse note = noteMapper.toResponse(requireOwned(id, username));
+		NoteResponse note = noteMapper.toResponse(requireAccess(id, AuthzActions.NOTE_READ));
 		List<String> paths = SelectPaths.parse(select);
 		if (paths.isEmpty()) {
 			return note;
@@ -93,29 +100,41 @@ public class NoteService {
 
 	@Transactional(readOnly = true)
 	public NoteResponse getMine(UUID id, String username) {
-		return noteMapper.toResponse(requireOwned(id, username));
+		return noteMapper.toResponse(requireAccess(id, AuthzActions.NOTE_READ));
 	}
 
 	public NoteResponse create(String username, NoteRequest request) {
+		authorizationService.require(currentAuth(), AuthzActions.NOTE_CREATE, null);
 		Note note = noteMapper.toNewEntity(username, request);
 		return noteMapper.toResponse(noteRepository.save(note));
 	}
 
 	public NoteResponse update(UUID id, String username, NoteRequest request) {
-		Note note = requireOwned(id, username);
+		Note note = requireAccess(id, AuthzActions.NOTE_UPDATE);
 		note.setTitle(request.title().trim());
 		note.setBody(noteMapper.trimToNull(request.body()));
 		return noteMapper.toResponse(noteRepository.save(note));
 	}
 
 	public void delete(UUID id, String username) {
-		Note note = requireOwned(id, username);
+		Note note = requireAccess(id, AuthzActions.NOTE_DELETE);
 		noteRepository.delete(note);
 	}
 
-	private Note requireOwned(UUID id, String username) {
-		return noteRepository.findByIdAndOwnerUsername(id, username)
+	/**
+	 * Load note and authorize via RBAC/ABAC switch. Unauthorized callers get 404 (no existence leak).
+	 */
+	private Note requireAccess(UUID id, String action) {
+		Note note = noteRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Note not found: " + id));
+		if (!authorizationService.allow(currentAuth(), action, note)) {
+			throw new ResourceNotFoundException("Note not found: " + id);
+		}
+		return note;
+	}
+
+	private static Authentication currentAuth() {
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
 	private Map<String, UserResponse> loadOwners(List<String> usernames) {

@@ -53,6 +53,9 @@ app:
   security:
     seed-demo-users: true
     allow-registration: true
+    # Authorization model: rbac (default) | abac — both implementations ship; switch only
+    authorization:
+      mode: ${AUTHZ_MODE:rbac}
     jwt:
       secret: ${JWT_SECRET:change-me-template-jwt-secret-key-32b!}
       expiration-ms: ${JWT_EXPIRATION_MS:3600000}

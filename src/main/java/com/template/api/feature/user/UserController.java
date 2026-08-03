@@ -64,10 +64,11 @@ public class UserController {
 	}
 
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("@authz.allow(authentication, 'user:list')")
 	@Operation(
 			summary = "List users (admin, paginated)",
-			description = "Requires ROLE_ADMIN. Query: page, limit, sort, search (username), select, include. "
+			description = "Requires admin authorization (RBAC role or ABAC policy — see app.security.authorization.mode). "
+					+ "Query: page, limit, sort, search (username), select, include. "
 					+ "Sort fields: username, enabled, createdAt, updatedAt. "
 					+ "Select roots: id, username, roles, enabled, createdAt. "
 					+ "include values: count (docs+totals), countOnly ({count} only), "
@@ -77,15 +78,17 @@ public class UserController {
 			@ApiResponse(responseCode = "200", description = "Paged user list or CountResponse when include=countOnly"),
 			@ApiResponse(responseCode = "400", description = "Invalid page, limit, sort, or select"),
 			@ApiResponse(responseCode = "401", description = "Unauthenticated"),
-			@ApiResponse(responseCode = "403", description = "Not an admin")
+			@ApiResponse(responseCode = "403", description = "Not authorized (admin required under default policies)")
 	})
 	public Object list(@ParameterObject PageQuery query) {
 		return userService.listAll(query);
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
-	@Operation(summary = "Create user (admin)", description = "Requires ROLE_ADMIN; roles: ADMIN, USER")
+	@PreAuthorize("@authz.allow(authentication, 'user:create')")
+	@Operation(
+			summary = "Create user (admin)",
+			description = "Requires admin authorization (RBAC/ABAC via app.security.authorization.mode); roles: ADMIN, USER")
 	@ApiResponses({
 			@ApiResponse(responseCode = "201", description = "User created"),
 			@ApiResponse(responseCode = "400", description = "Validation failed or unsupported role"),

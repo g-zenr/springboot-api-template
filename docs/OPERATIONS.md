@@ -18,6 +18,7 @@ See `.env.example`:
 - `CORS_ALLOWED_ORIGINS`
 - `SEED_DEMO_USERS`, `ALLOW_REGISTRATION`
 - `RATE_LIMIT_LOGIN_PER_MIN`, `RATE_LIMIT_API_PER_MIN`
+- `AUTHZ_MODE` — `rbac` (default) or `abac` (both implementations ship; see security model)
 
 ## Docker
 
@@ -43,11 +44,23 @@ Run app image with `SPRING_PROFILES_ACTIVE=prod` and real `DB_*` + `JWT_SECRET`.
 - Actuator: `/actuator/health`, `/actuator/info`
 - Rate limit: 429 on abuse
 
+## Authorization mode (RBAC / ABAC)
+
+| Mode | Config | Behavior (defaults) |
+|------|--------|---------------------|
+| `rbac` | `app.security.authorization.mode=rbac` or `AUTHZ_MODE=rbac` | Roles (`ADMIN` for user admin APIs); notes owner-only |
+| `abac` | `app.security.authorization.mode=abac` or `AUTHZ_MODE=abac` | Attribute policies; notes owner **or** ADMIN |
+
+Code: `config.security.authz` · WWG: `.wwg/wiki/05-architecture/security-model.md`
+
+Switch only — both evaluators are always on the classpath; `AuthorizationService` selects at runtime.
+
 ## Production checklist (product fork)
 
 - [ ] Set strong `JWT_SECRET`
 - [ ] `seed-demo-users=false`
 - [ ] Registration policy decided
+- [ ] Choose `AUTHZ_MODE` (`rbac` or `abac`) and review default policies
 - [ ] Postgres backups / migrations plan
 - [ ] Replace demo passwords; lock down CORS
 - [ ] Review rate limits for multi-instance (in-memory is single-node)

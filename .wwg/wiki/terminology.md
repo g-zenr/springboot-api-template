@@ -20,3 +20,6 @@
 | PageResponse | Paged list envelope (`content` + metadata) |
 | CountResponse | Count-only body when `include=countOnly` |
 | AI slop | Inconsistent, noisy, or over-abstracted agent code; banned — see `principles/anti-ai-slop.md` |
+| RBAC | Role-based access control; default `app.security.authorization.mode=rbac` |
+| ABAC | Attribute-based access control; enable with `mode=abac` — see `security-model.md` |
+| AuthorizationService (`authz`) | Config-switchable facade for `@PreAuthorize("@authz.allow(...)")` and service checks |

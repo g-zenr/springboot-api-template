@@ -132,6 +132,7 @@ Full map: [docs/FOLDER-STRUCTURE.md](docs/FOLDER-STRUCTURE.md)
 - **Samples:** Items (shared catalog), Notes (owner-scoped)
 - **List query:** pagination, sort, search, sparse `select`, `include=count` / `countOnly`
 - **Ops:** `local` \| `postgres` \| `prod`, Docker Compose, Dockerfile, Spotless
+- **Authz:** **RBAC or ABAC** via `AUTHZ_MODE` / `app.security.authorization.mode` (both implemented)
 - **Quality:** test minima (≥10/feature, ≥5/function), docs + Swagger sync, WWG governance
 
 ### Shared list query (summary)
@@ -155,6 +156,15 @@ Full catalog: [docs/LIST-QUERY.md](docs/LIST-QUERY.md#include-options)
 | `local` (default) | H2 in-memory | H2 console + Swagger on; demo seed typical |
 | `postgres` | PostgreSQL | Set `DB_*` + **`JWT_SECRET`** (≥ 32 chars) |
 | `prod` | PostgreSQL | Strong secrets; no open Swagger; no demo seed defaults |
+
+### Authorization mode
+
+| Mode | How to enable |
+|------|----------------|
+| **RBAC** (default) | `AUTHZ_MODE=rbac` or omit |
+| **ABAC** | `AUTHZ_MODE=abac` |
+
+Both evaluators ship; switch is configuration only. Details: [docs/OPERATIONS.md](docs/OPERATIONS.md) · WWG `security-model.md`.
 
 ---
 

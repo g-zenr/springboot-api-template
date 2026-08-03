@@ -14,6 +14,7 @@
 - WWG accepted truth for list query: `.wwg/wiki/05-architecture/list-query-contract.md` (agents load via api-map / RESOLVER / AGENTS.md)
 - **Mandatory WWG Truth Sync:** apply/repair tasks must update matching `.wwg/wiki/**` + `workspace/current-task.md` in the same task (enforced in AGENTS.md, drift-guard, quality-gates)
 - **Anti AI-slop** principle: `.wwg/wiki/principles/anti-ai-slop.md` + AGENTS.md gate — house style, no noise, no drive-by refactors
+- **RBAC + ABAC** both implemented; config switch `app.security.authorization.mode` / `AUTHZ_MODE` (`rbac` default, `abac` optional)
 
 ### Changed
 

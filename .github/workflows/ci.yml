@@ -20,6 +20,10 @@ jobs:
           java-version: "21"
           cache: maven
 
+      # Ensure wrapper is executable (Windows checkouts may lose +x without git filemode)
+      - name: Ensure mvnw is executable
+        run: chmod +x mvnw
+
       - name: Spotless check
         run: ./mvnw -B spotless:check
 
