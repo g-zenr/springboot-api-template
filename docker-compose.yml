@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: api-template-postgres
+    environment:
+      POSTGRES_DB: template
+      POSTGRES_USER: template
+      POSTGRES_PASSWORD: template
+    ports:
+      # Host 5433 avoids conflict with a local Windows Postgres often on 5432
+      - "5433:5432"
+    volumes:
+      - api_template_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U template -d template"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  api_template_pgdata:

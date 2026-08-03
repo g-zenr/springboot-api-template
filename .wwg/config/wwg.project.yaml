@@ -1,0 +1,35 @@
+wwg:
+  instance_type: new-project
+  template_version: 0.1.0
+  adoption_mode: greenfield
+  created_at: 2026-08-01
+  last_updated_at: 2026-08-01
+  layers:
+    wiki:
+      root: .wwg/wiki
+      strategy: wwg-native
+    workspace:
+      root: .wwg/workspace
+      strategy: wwg-native
+    governance:
+      root: .wwg/governance
+      strategy: wwg-native
+  canonical_artifacts:
+    root_agents: AGENTS.md
+    meta_prompt_template: agent-meta-prompt-template-v2.md
+    project_truth: .wwg/wiki/project-truth.md
+    terminology: .wwg/wiki/terminology.md
+    principles: .wwg/wiki/principles
+    changelog: CHANGELOG.md
+    readme: README.md
+project:
+  name: Spring Boot API Template
+  slug: springboot-api-template
+  stack:
+    language: java
+    java_version: "21"
+    framework: spring-boot
+    spring_boot_version: "4.0.0"
+    persistence: spring-data-jpa
+    migrations: flyway
+    api_docs: springdoc-openapi
