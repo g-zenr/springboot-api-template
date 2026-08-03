@@ -17,12 +17,12 @@ These rules keep the template **fast, stable, and consistent**. Handoff fails if
 | 3 | **Secure Actuators** | Only `health`, `info` exposed by default | Do not expose `env`, `beans`, `heapdump`, `metrics` publicly without auth + ADR |
 | 4 | **DevTools never in prod** | Not on the classpath | Do not add `spring-boot-devtools` to main runtime for prod images |
 | 5 | **Global exception handling** | `common.error.ApiExceptionHandler` + ProblemDetail | No try/catch in controllers for expected errors; use handler + domain exceptions |
-| 6 | **Observe before guessing** | Actuator health/info; correlation id; ECS logs in prod | Add metrics/tracing deliberately; don’t “optimize” without evidence |
+| 6 | **Observe before guessing** | Actuator health/info; **metrics + Prometheus** (auth required); correlation id; ECS logs | Don’t expose metrics publicly; scrape `/actuator/prometheus` with a token |
 | 7 | **Environment-specific config** | `application.yml` multi-doc profiles: `local` / `postgres` / `prod` | Prefer profile blocks or env vars; no secrets in repo |
 | 8 | **Thin controllers** | Controller → Service → Repository | Controllers: map HTTP, `@Valid`, auth annotations only — business rules in services |
-| 9 | **Fast tests when possible** | Many flows use `@SpringBootTest`+MockMvc (template style) | Prefer slice tests (`@WebMvcTest`, `@DataJpaTest`) for **new pure unit** cases when they fit; keep MockMvc/IT for real contracts; never drop coverage minima |
+| 9 | **Fast tests when possible** | Slice samples: `ItemControllerWebMvcTest`, `ItemRepositoryDataJpaTest` + full `@SpringBootTest` contracts | Prefer slices for pure web/JPA units; keep full stack for security/auth contracts; never drop coverage minima |
 | 10 | **Constructor injection** | Final fields + constructors everywhere | No `@Autowired` on fields; no field injection |
-| 11 | **Async only when needed** | Not default | Don’t add `@Async` / thread pools for simple request path work; justify fire-and-forget |
+| 11 | **Async only when needed** | `AsyncConfig` optional via `app.async.enabled=false` (default) | Enable only for non-request-critical jobs; keep API path synchronous |
 | 12 | **Use Boot starters** | security, validation, data-jpa, flyway, actuator, webmvc | Prefer official starters over hand-rolled stacks / random libs |
 
 ---
@@ -55,7 +55,9 @@ Use `ResourceNotFoundException`, `ConflictException`, validation annotations, au
 
 ### 6. Observability
 
-Keep `X-Correlation-Id` / MDC. Prod JSON logs via existing logback profile. Don’t remove actuator health.
+Keep `X-Correlation-Id` / MDC. Prod JSON logs via existing logback profile.  
+Public: `/actuator/health`, `/actuator/info`.  
+Authenticated: `/actuator/metrics`, `/actuator/prometheus` (Micrometer Prometheus registry).
 
 ### 7. Profiles
 
@@ -77,8 +79,8 @@ feature.<name>/
 ### 9. Testing
 
 - Minima: ≥10 tests/feature, ≥5/function (testing-policy).
-- Integration/contract tests for public HTTP remain valuable in this template.
-- Slice tests are welcome for focused units; don’t rewrite the whole suite “for purity.”
+- Full `@SpringBootTest` + MockMvc for auth/security contracts.
+- Slice samples present: `@WebMvcTest` (ItemController), `@DataJpaTest` (ItemRepository).
 
 ### 10. DI style
 
@@ -86,7 +88,7 @@ Constructor injection only (Lombok `@RequiredArgsConstructor` is fine if the pro
 
 ### 11. Concurrency
 
-Default path stays synchronous. Async needs a clear non-request-critical use case + error handling story.
+Default path stays synchronous. Optional pool: `app.async.enabled=true` + `AsyncConfig`.
 
 ### 12. Starters & dependencies
 

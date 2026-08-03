@@ -33,7 +33,11 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers("/actuator/health", "/actuator/info", "/actuator").permitAll()
+						// Liveness/readiness style probes stay public; metrics/prometheus require auth
+						.requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
+						.requestMatchers("/actuator/metrics", "/actuator/metrics/**", "/actuator/prometheus")
+						.authenticated()
+						.requestMatchers("/actuator").authenticated()
 						.requestMatchers(
 								"/swagger-ui/**",
 								"/swagger-ui.html",

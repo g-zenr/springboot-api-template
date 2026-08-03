@@ -1,6 +1,8 @@
 package com.template.api.platform;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,8 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.template.api.support.AuthTestSupport;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,11 +38,26 @@ class ActuatorEndpointsTest {
 	}
 
 	@Test
-	void actuatorRoot_listsLinks() throws Exception {
-		mockMvc.perform(get("/actuator"))
+	void metrics_requiresAuthentication() throws Exception {
+		mockMvc.perform(get("/actuator/metrics")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void metrics_withAuth_returnsOk() throws Exception {
+		String auth = AuthTestSupport.adminBearer(mockMvc);
+		mockMvc.perform(get("/actuator/metrics").header(HttpHeaders.AUTHORIZATION, auth))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$._links.health").exists())
-				.andExpect(jsonPath("$._links.info").exists());
+				.andExpect(jsonPath("$.names").isArray());
+	}
+
+	@Test
+	void prometheus_withAuth_returnsScrapeText() throws Exception {
+		String auth = AuthTestSupport.adminBearer(mockMvc);
+		mockMvc.perform(get("/actuator/prometheus")
+						.header(HttpHeaders.AUTHORIZATION, auth)
+						.accept("text/plain", "application/openmetrics-text", "*/*"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("#")));
 	}
 
 	@Test

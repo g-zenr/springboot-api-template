@@ -51,8 +51,17 @@ First CI run after `pom.xml` changes still downloads dependencies; later runs sh
 ## Observability
 
 - Header/MDC: `X-Correlation-Id` / `correlationId`
-- Actuator: `/actuator/health`, `/actuator/info`
+- Actuator **public:** `/actuator/health`, `/actuator/info`
+- Actuator **authenticated (Bearer):** `/actuator/metrics`, `/actuator/prometheus` (Prometheus scrape)
 - Rate limit: 429 on abuse
+- Optional async executor: `app.async.enabled=true` (off by default)
+
+Prometheus scrape example (local):
+
+```http
+GET /actuator/prometheus
+Authorization: Bearer <accessToken>
+```
 
 ## Authorization mode (RBAC / ABAC)
 

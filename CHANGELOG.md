@@ -15,6 +15,7 @@
 - **Mandatory WWG Truth Sync:** apply/repair tasks must update matching `.wwg/wiki/**` + `workspace/current-task.md` in the same task (enforced in AGENTS.md, drift-guard, quality-gates)
 - **Anti AI-slop** principle: `.wwg/wiki/principles/anti-ai-slop.md` + AGENTS.md gate — house style, no noise, no drive-by refactors
 - **Spring Boot best-practices guardrails:** `.wwg/wiki/principles/spring-boot-best-practices.md` (12 speed/stability rules wired into AGENTS + quality-gates)
+- Observability complete: Micrometer **Prometheus** (`/actuator/prometheus`) + metrics (auth required); slice tests `@WebMvcTest` / `@DataJpaTest`; optional `AsyncConfig` (`app.async.enabled`)
 - **RBAC + ABAC** both implemented; config switch `app.security.authorization.mode` / `AUTHZ_MODE` (`rbac` default, `abac` optional)
 
 ### Changed

@@ -65,6 +65,6 @@ Code package: `com.template.api.config.security.authz`.
 
 ## HTTP security (both modes)
 
-- Public: auth login/refresh/logout/register, actuator health/info, Swagger (non-prod), H2 console (local)
-- Other `/api/**`: authenticated JWT
+- Public: auth login/refresh/logout/register, actuator **health/info**, Swagger (non-prod), H2 console (local)
+- Authenticated: `/actuator/metrics`, `/actuator/prometheus`, other `/api/**`
 - Method security enabled (`@EnableMethodSecurity`)
